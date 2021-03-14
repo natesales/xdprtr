@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+make
+
+FLAGS="-A --progsec xdp_router --filename xdp_prog_kern.o -N -F"
+
+sudo ./xdp_loader -d enp1s0f0 $FLAGS
+sudo ./xdp_loader -d enp1s0f1 $FLAGS
+
+sudo ./xdp_prog_user -d enp1s0f0
+sudo ./xdp_prog_user -d enp1s0f1
+
