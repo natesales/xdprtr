@@ -10,13 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
-        run: sudo apt update && sudo apt install -y git make clang llvm libelf-dev pkg-config gcc
+        run: sudo apt update && sudo apt install -y git make clang llvm libelf-dev pkg-config gcc g++-multilib
 
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Get libbpf submodule
-        run: git submodule update --init
-
       - name: make
-        run: make
+        run: export C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/ make
