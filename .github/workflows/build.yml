@@ -15,5 +15,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Get libbpf submodule
+        run: git submodule update --init
+
       - name: make
         run: C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/ make
