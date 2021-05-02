@@ -1,0 +1,22 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: apt update && apt install -y git make clang llvm libelf-dev pkg-config gcc
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get libbpf submodule
+        run: git submodule update --init
+
+      - name: make
+        run: make
