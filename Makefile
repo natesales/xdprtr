@@ -1,15 +1,11 @@
 # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 
-LESSONS = $(wildcard packet*)
-LESSONS_CLEAN = $(addsuffix _clean,$(LESSONS))
+USER_TARGETS := src/xdp_stats src/xdp_loader
 
-.PHONY: clean $(LESSONS) $(LESSONS_CLEAN)
+LIBBPF_DIR = ./libbpf/src/
+COMMON_DIR = ./common/
 
-all: $(LESSONS)
-clean: $(LESSONS_CLEAN)
+# Extend with another COMMON_OBJS
+COMMON_OBJS += $(COMMON_DIR)/common_libbpf.o
 
-$(LESSONS):
-	$(MAKE) -C $@
-
-$(LESSONS_CLEAN):
-	$(MAKE) -C $(subst _clean,,$@) clean
+include $(COMMON_DIR)/common.mk

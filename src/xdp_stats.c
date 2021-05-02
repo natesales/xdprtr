@@ -24,7 +24,7 @@ static const char *__doc__ = "XDP stats program\n"
 #include "../common/common_user_bpf_xdp.h"
 #include "../common/xdp_stats_kern_user.h"
 
-#include "bpf_util.h" /* bpf_num_possible_cpus */
+#include "../headers/bpf_util.h" /* bpf_num_possible_cpus */
 
 static const struct option_wrapper long_options[] = {
 	{{"help",        no_argument,		NULL, 'h' },
