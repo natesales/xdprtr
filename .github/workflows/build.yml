@@ -16,4 +16,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: make
-        run: export C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/ make
+        run: C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/ make
