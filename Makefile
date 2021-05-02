@@ -1,11 +1,10 @@
-# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-
-USER_TARGETS := src/xdp_stats src/xdp_loader
+USER_TARGETS := src/xdp_stats src/xdp_loader src/xdp_prog_user
+XDP_TARGETS  := src/xdp_prog_kern
 
 LIBBPF_DIR = ./libbpf/src/
 COMMON_DIR = ./common/
 
-# Extend with another COMMON_OBJS
 COMMON_OBJS += $(COMMON_DIR)/common_libbpf.o
+EXTRA_DEPS  += $(COMMON_DIR)/parsing_helpers.h
 
 include $(COMMON_DIR)/common.mk
