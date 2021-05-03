@@ -1,0 +1,17 @@
+name: "xdprtr"
+arch: "amd64"
+platform: "linux"
+section: "default"
+priority: "extra"
+maintainer: "Nate Sales <nate@natesales.net>"
+vendor: "Nate Sales"
+description: XDP programmable forwarding plane
+homepage: "https://github.com/natesales/xdprtr"
+license: "GPL-3.0"
+contents:
+- src: ./src/xdp_loader
+  dst: /usr/bin/xdprtr-loader
+- src: ./src/xdp_prog_kern.o
+  dst: /lib/xdprtr/xdprtr.o
+- src: ./src/xdp_stats
+  dst: /usr/bin/xdprtr-stats
