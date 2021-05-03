@@ -1,0 +1,37 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y git make clang llvm libelf-dev pkg-config gcc g++-multilib
+
+      - name: Install nfpm
+        run: curl -sfL https://install.goreleaser.com/github.com/goreleaser/nfpm.sh | sh
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get libbpf submodule
+        run: git submodule update --init
+
+      - name: make
+        run: C_INCLUDE_PATH=/usr/include/x86_64-linux-gnu/ make
+
+      - name: Add version attribute
+        run: 'echo "version: ${GITHUB_REF##*/}" > nfpm.yaml'
+
+      - name: Build deb
+        run: nfpm pkg --packager deb --target .
+
+      - name: Build rpm
+        run: nfpm pkg --packager rpm --target .
+
+      - name: List outputs
+        run: ls
