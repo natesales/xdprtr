@@ -22,7 +22,7 @@ static const char *__doc__ = "XDP loader\n"
 #include "../common/common_user_bpf_xdp.h"
 #include "../common/common_libbpf.h"
 
-static const char *default_filename = "xdp_prog_kern.o";
+static const char *default_filename = "/lib/xdprtr/xdprtr.o";
 
 static const struct option_wrapper long_options[] = {
 
