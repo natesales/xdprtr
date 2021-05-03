@@ -27,6 +27,9 @@ jobs:
       - name: Add version attribute
         run: 'echo "version: ${GITHUB_REF##*/}" > nfpm.yaml'
 
+      - name: Debug
+        run: ls ; cat nfpm.yaml
+
       - name: Build deb
         run: ./bin/nfpm pkg --packager deb --target .
 
