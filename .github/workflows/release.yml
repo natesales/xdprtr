@@ -28,10 +28,10 @@ jobs:
         run: 'echo "version: ${GITHUB_REF##*/}" > nfpm.yaml'
 
       - name: Build deb
-        run: nfpm pkg --packager deb --target .
+        run: ./bin/nfpm pkg --packager deb --target .
 
       - name: Build rpm
-        run: nfpm pkg --packager rpm --target .
+        run: ./bin/nfpm pkg --packager rpm --target .
 
       - name: List outputs
         run: ls
