@@ -13,12 +13,9 @@ static const char *__doc__ = "XDP stats program\n"
 #include <time.h>
 
 #include <bpf/bpf.h>
-/* Lesson#1: this prog does not need to #include <bpf/libbpf.h> as it only uses
- * the simple bpf-syscall wrappers, defined in libbpf #include<bpf/bpf.h>
- */
 
 #include <net/if.h>
-#include <linux/if_link.h> /* depend on kernel-headers installed */
+#include <linux/if_link.h>
 
 #include "../common/common_params.h"
 #include "../common/common_user_bpf_xdp.h"
