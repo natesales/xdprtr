@@ -33,5 +33,9 @@ jobs:
       - name: Build rpm
         run: ./bin/nfpm pkg --packager rpm --target .
 
-      - name: List outputs
-        run: ls
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: xdprtr*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
