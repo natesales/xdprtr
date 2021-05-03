@@ -42,6 +42,8 @@ clean:
 	rm -f $(USER_TARGETS) $(XDP_OBJ) $(USER_OBJ) $(COPY_LOADER) $(COPY_STATS)
 	rm -f *.ll
 	rm -f *~
+	rm -f *.deb
+	rm -f *.rpm
 
 llvm-check: clang llc
 	@for TOOL in $^ ; do \
