@@ -31,7 +31,7 @@ BPF_CFLAGS ?= -I$(LIBBPF_DIR)/build/usr/include/ -I../headers/
 
 LIBS = -l:libbpf.a -lelf $(USER_LIBS)
 
-all: llvm-check $(USER_TARGETS) $(XDP_OBJ) $(COPY_LOADER) $(COPY_STATS)
+all: llvm-check $(USER_TARGETS) $(XDP_OBJ) $(COPY_LOADER) $(COPY_STATS) build-deb build-rpm
 
 .PHONY: clean clang llc
 
@@ -53,8 +53,11 @@ llvm-check: clang llc
 		else true; fi; \
 	done
 
-install: all
-	cp src/xdprtrctl /usr/bin/xdprtrctl
+build-deb:
+	nfpm pkg --packager deb --target .
+
+build-rpm:
+	nfpm pkg --packager rpm --target .
 
 $(OBJECT_LIBBPF):
 	@if [ ! -d $(LIBBPF_DIR) ]; then \
