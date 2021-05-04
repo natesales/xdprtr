@@ -61,4 +61,4 @@ Other options:
 
 ### Installation
 
-xdprtr can be installed from my [code repositories](https://github.com/natesales/repos) or as a GitHub [release](https://github.com/natesales/xdprtr/releases).
+xdprtr can be installed from my [code repositories](https://github.com/natesales/repo) or as a GitHub [release](https://github.com/natesales/xdprtr/releases).
