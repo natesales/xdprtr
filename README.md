@@ -49,8 +49,7 @@ The `xdpstat` utility serves to read XDP statistics from a BPF map. With the `xd
 Usage: xdpstat [options]
 
 DOCUMENTATION:
- XDP stats program
- - Finding xdp_stats_map via --dev name info
+ XDPRTR XDP stats program - get statistics from running XDP program
 
 Required options:
  -d, --dev <ifname>         Operate on device <ifname>
