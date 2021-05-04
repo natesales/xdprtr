@@ -1,4 +1,4 @@
-USER_TARGETS := src/xdp_stats src/xdp_loader
+USER_TARGETS := src/xdp_stats src/xdp_loader src/xdprtrctl
 XDP_TARGETS  := src/xdp_prog_kern
 
 LIBBPF_DIR = ./libbpf/src/
