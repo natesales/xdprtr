@@ -39,3 +39,9 @@ jobs:
           files: xdprtr.{deb,rpm}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload deb package
+        run: curl -s -F package=xdprtr*.deb https://${{ secrets.FURY_TOKEN }}@push.fury.io/natesales/
+
+      - name: Upload rpm package
+        run: curl -s -F package=xdprtr*.rpm https://${{ secrets.FURY_TOKEN }}@push.fury.io/natesales/
