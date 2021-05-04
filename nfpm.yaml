@@ -9,9 +9,9 @@ description: XDP programmable forwarding plane
 homepage: "https://github.com/natesales/xdprtr"
 license: "GPL-3.0"
 contents:
-- src: ./src/xdp_loader
-  dst: /usr/bin/xdprtr-loader
-- src: ./src/xdp_prog_kern.o
+- src: ./src/xdprtrctl
+  dst: /usr/bin/xdprtrctl
+- src: ./src/xdprtr.o
   dst: /lib/xdprtr/xdprtr.o
-- src: ./src/xdp_stats
-  dst: /usr/bin/xdprtr-stats
+- src: ./src/xdpstat
+  dst: /usr/bin/xdprtrstat

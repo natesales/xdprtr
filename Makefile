@@ -1,5 +1,5 @@
-USER_TARGETS := src/xdp_stats src/xdp_loader src/xdprtrctl
-XDP_TARGETS  := src/xdp_prog_kern
+USER_TARGETS := src/xdprtrctl src/xdpstat
+XDP_TARGETS  := src/xdprtr
 
 LIBBPF_DIR = ./libbpf/src/
 COMMON_DIR = ./common/
@@ -52,6 +52,9 @@ llvm-check: clang llc
 			exit 1; \
 		else true; fi; \
 	done
+
+install: all
+	cp src/xdprtrctl /usr/bin/xdprtrctl
 
 $(OBJECT_LIBBPF):
 	@if [ ! -d $(LIBBPF_DIR) ]; then \
