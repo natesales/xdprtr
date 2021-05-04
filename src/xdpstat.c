@@ -1,6 +1,5 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-static const char *__doc__ = "XDP stats program\n"
-	" - Finding xdp_stats_map via --dev name info\n";
+static const char *__doc__ = "XDPRTR XDP stats program - get statistics from running XDP program\n";
 
 #include <stdio.h>
 #include <stdlib.h>
