@@ -36,12 +36,12 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          files: xdprtr.{deb,rpm}
+          files: xdprtr_*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload deb package
-        run: curl -s -F package=xdprtr*.deb https://${{ secrets.FURY_TOKEN }}@push.fury.io/natesales/
+        run: curl -s -F package=$(find *.deb) https://${{ secrets.FURY_TOKEN }}@push.fury.io/natesales/
 
       - name: Upload rpm package
-        run: curl -s -F package=xdprtr*.rpm https://${{ secrets.FURY_TOKEN }}@push.fury.io/natesales/
+        run: curl -s -F package=$(*.rpm) https://${{ secrets.FURY_TOKEN }}@push.fury.io/natesales/
