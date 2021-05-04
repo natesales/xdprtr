@@ -15,3 +15,7 @@ contents:
   dst: /lib/xdprtr/xdprtr.o
 - src: ./src/xdpstat
   dst: /usr/bin/xdprtrstat
+- src: ./util/xdprtrload
+  dst: /usr/bin/xdprtrload
+- src: ./util/xdprtrunload
+  dst: /usr/bin/xdprtrunload

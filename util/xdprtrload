@@ -1,0 +1,6 @@
+#!/bin/bash
+# xdprtrload - load xdprtr on multiple interfaces
+
+for iface in "$@"; do
+    xdprtrctl --dev "$iface" --progsec xdp_rtr -A -F
+done
