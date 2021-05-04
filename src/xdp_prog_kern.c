@@ -1,15 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+/* SPDX-License-Identifier: GPL-3.0 */
 #include <linux/bpf.h>
 #include <linux/in.h>
 #include <bpf/bpf_helpers.h>
 #include <bpf/bpf_endian.h>
 #include <net/if.h>
 
-// The parsing helper functions from the packet01 lesson have moved here
 #include "../common/parsing_helpers.h"
-#include "../common/rewrite_helpers.h"
-
-/* Defines xdp_stats_map */
 #include "../common/xdp_stats_kern_user.h"
 #include "../common/xdp_stats_kern.h"
 
@@ -31,13 +27,9 @@ struct bpf_map_def SEC("maps") redirect_params = {
 	.max_entries = 1,
 };
 
-//#define AF_INET 2
-//#define AF_INET6 10
-#define INET_ADDRSTRLEN	 16
-#define INET6_ADDRSTRLEN 48
 #define IPV6_FLOWINFO_MASK bpf_htonl(0x0FFFFFFF)
 
-/* from include/net/ip.h */
+// IPv4 decrement TTL from include/net/ip.h
 static __always_inline int ip_decrease_ttl(struct iphdr *iph) {
 	__u32 check = iph->check;
 	check += bpf_htons(0x0100);
@@ -45,10 +37,9 @@ static __always_inline int ip_decrease_ttl(struct iphdr *iph) {
 	return --iph->ttl;
 }
 
-/* Solution to packet03/assignment-4 */
-SEC("xdp_router")
-int xdp_router_func(struct xdp_md *ctx) {
-	void *data_end = (void *)(long)ctx->data_end;
+// XDP forwarding handler
+static int _xdp_fwd(struct xdp_md *ctx, int debug) {
+    void *data_end = (void *)(long)ctx->data_end;
 	void *data = (void *)(long)ctx->data;
 	struct bpf_fib_lookup fib_params = {};
 	struct ethhdr *eth = data;
@@ -114,7 +105,7 @@ int xdp_router_func(struct xdp_md *ctx) {
 
 	rc = bpf_fib_lookup(ctx, &fib_params, sizeof(fib_params), 0);
 	switch (rc) {
-	case BPF_FIB_LKUP_RET_SUCCESS:         /* lookup successful */
+	case BPF_FIB_LKUP_RET_SUCCESS: // FIB lookup success
 		if (h_proto == bpf_htons(ETH_P_IP))
 			ip_decrease_ttl(iph);
 		else if (h_proto == bpf_htons(ETH_P_IPV6))
@@ -123,42 +114,55 @@ int xdp_router_func(struct xdp_md *ctx) {
 		memcpy(eth->h_dest, fib_params.dmac, ETH_ALEN);
 		memcpy(eth->h_source, fib_params.smac, ETH_ALEN);
 		action = bpf_redirect_map(&tx_port, fib_params.ifindex, 0);
-
-		if (action == XDP_REDIRECT) {
-		    bpf_printk("redirecting src %d dst %d out %d", fib_params.ipv4_src, fib_params.ipv4_dst, fib_params.ifindex);
-		} else {
-		    bpf_printk("not redirecting, action %s out %d", action, fib_params.ifindex);
-		}
-
-        // XDP_ABORTED 0
-        // XDP_PASS 2
-        // XDP_TX 3
-        // XDP_REDIRECT 4
+		if (debug == 1) {
+            bpf_printk("action %d src %d dst %d", action, fib_params.ipv4_src, fib_params.ipv4_dst);
+        }
 		break;
-	case BPF_FIB_LKUP_RET_BLACKHOLE:    /* dest is blackholed; can be dropped */
-	case BPF_FIB_LKUP_RET_UNREACHABLE:  /* dest is unreachable; can be dropped */
-	case BPF_FIB_LKUP_RET_PROHIBIT:     /* dest not allowed; can be dropped */
+	case BPF_FIB_LKUP_RET_BLACKHOLE:
+	case BPF_FIB_LKUP_RET_UNREACHABLE:
+	case BPF_FIB_LKUP_RET_PROHIBIT:
 		action = XDP_DROP;
-		bpf_printk("lookup went bad, dropping, src %d dst %d", fib_params.ipv4_src, fib_params.ipv4_dst);
 		break;
-	case BPF_FIB_LKUP_RET_NOT_FWDED:    /* packet is not forwarded */
-	case BPF_FIB_LKUP_RET_FWD_DISABLED: /* fwding is not enabled on ingress */
-	case BPF_FIB_LKUP_RET_UNSUPP_LWT:   /* fwd requires encapsulation */
-	case BPF_FIB_LKUP_RET_NO_NEIGH:     /* no neighbor entry for nh */
-	case BPF_FIB_LKUP_RET_FRAG_NEEDED:  /* fragmentation required to fwd */
-		/* PASS */
-		break;
-    default:
-        bpf_printk("lookup unknown, rc %d src %d dst %d", rc, fib_params.ipv4_src, fib_params.ipv4_dst);
+	case BPF_FIB_LKUP_RET_NOT_FWDED:
+	case BPF_FIB_LKUP_RET_FWD_DISABLED:
+	case BPF_FIB_LKUP_RET_UNSUPP_LWT:
+	case BPF_FIB_LKUP_RET_NO_NEIGH:
+	case BPF_FIB_LKUP_RET_FRAG_NEEDED:
+		break; // XDP_PASS
 	}
+
+    if (debug == 1) {
+        bpf_printk("rc %d src %d dst %d", rc, fib_params.ipv4_src, fib_params.ipv4_dst);
+    }
 
 out:
 	return xdp_stats_record_action(ctx, action);
 }
 
+// XDP functions need to have a different identifier than their SEC labels (the "_func" suffix)
+
+// XDP router, debug disabled
+SEC("xdp_rtr")
+int xdp_rtr_func(struct xdp_md *ctx) {
+	return _xdp_fwd(ctx, 0);
+}
+
+// XDP router, debug enabled
+SEC("xdp_rtr_debug")
+int xdp_rtr_debug_func(struct xdp_md *ctx) {
+	return _xdp_fwd(ctx, 1);
+}
+
+// Pass to kernel
 SEC("xdp_pass")
 int xdp_pass_func(struct xdp_md *ctx) {
-	return XDP_PASS;
+    return xdp_stats_record_action(ctx, XDP_PASS);
+}
+
+// Drop all packets
+SEC("xdp_drop")
+int xdp_drop_func(struct xdp_md *ctx) {
+    return xdp_stats_record_action(ctx, XDP_DROP);
 }
 
 char _license[] SEC("license") = "GPL";
